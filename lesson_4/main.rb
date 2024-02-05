@@ -88,6 +88,7 @@ class MainInterface
     return if start_station.nil? || end_station.nil? || start_station == end_station
 
     @routes << Route.new(start_station, end_station)
+    puts @routes
     puts "Route from #{start_station.name} to #{end_station.name} created."
   end
 
@@ -190,6 +191,7 @@ class MainInterface
 
   def select_route
     puts "Available routes:"
+    # @routes.each_with_index { |route, index| puts "#{index + 1}: Route ##{route.stations}" }
     @routes.each_with_index do |route, index|
       start_station_name = route.stations.first.name
       end_station_name = route.stations.last.name
@@ -208,3 +210,6 @@ class MainInterface
     @trains[index]
   end
 end
+
+interface = MainInterface.new
+interface.run
