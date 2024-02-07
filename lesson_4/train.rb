@@ -1,11 +1,22 @@
-class Train
-  attr_reader :number, :type, :carriages, :speed
+require_relative 'instance_counter'
 
+module Manufacturer
+  attr_accessor :manufacturer
+end
+
+class Train
+  include Manufacturer
+  include InstanceCounter
+
+  attr_reader :number, :type, :carriages, :speed
+  @@trains = {}
   def initialize(number, type)
     @number = number
     @type = type
     @carriages = []
     @speed = 0
+    @@trains[number] = self
+    register_instance
   end
 
   def speed_up(amount)
@@ -48,6 +59,10 @@ class Train
 
   def current_station
     @route.stations[@current_station_index]
+  end
+
+  def self.find(number)
+    @@trains[number]
   end
 
   protected
@@ -100,20 +115,21 @@ class CargoTrain < Train
 end
 
 
-class PassengerCarriage
-  attr_reader :type
+class Carriage
+  include Manufacturer
 
+  attr_reader :type
+end
+
+class PassengerCarriage < Carriage
   def initialize
     @type = :passenger
   end
 end
 
 
-class CargoCarriage
-  attr_reader :type
-
+class CargoCarriage < Carriage
   def initialize
     @type = :cargo
   end
 end
-
