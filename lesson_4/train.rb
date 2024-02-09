@@ -1,8 +1,5 @@
 require_relative 'instance_counter'
-
-module Manufacturer
-  attr_accessor :manufacturer
-end
+require_relative 'manufacturer'
 
 class Train
   include Manufacturer
@@ -28,7 +25,7 @@ class Train
   end
 
   def add_carriage(carriage)
-    @carriages << carriage if speed == 0 && carriage_compitable?(carriage)
+    @carriages << carriage if speed == 0 && carriage_compatible?(carriage)
   end
 
   def remove_carriage(carriage)
@@ -89,47 +86,5 @@ class Train
 end
 
 
-class PassengerTrain < Train
-  def initialize(number)
-    super(number, :passenger)
-  end
-
-  private
-
-  def carriage_compatible?(carriage)
-    carriage.is_a?(PassengerCarriage)
-  end
-end
 
 
-class CargoTrain < Train
-  def initialize(number)
-    super(number, :cargo)
-  end
-
-    private
-
-    def carriage_compatible?(carriage)
-      carriage.is_a?(CargoCarriage)
-    end
-end
-
-
-class Carriage
-  include Manufacturer
-
-  attr_reader :type
-end
-
-class PassengerCarriage < Carriage
-  def initialize
-    @type = :passenger
-  end
-end
-
-
-class CargoCarriage < Carriage
-  def initialize
-    @type = :cargo
-  end
-end
