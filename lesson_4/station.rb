@@ -8,8 +8,16 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
+    validate!
     @@stations << self
     register_instance
+  end
+
+  def valid?
+    validate!
+    true
+  rescue
+    false
   end
 
   def self.all
@@ -26,5 +34,11 @@ class Station
 
   def trains_by_type(type)
     @trains.count { |train| train.type == type }
+  end
+
+  private
+
+  def validate!
+    raise "Station name cannot be empty!" if name.nil? ||name.strip.empty?
   end
 end

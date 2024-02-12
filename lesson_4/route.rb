@@ -7,7 +7,14 @@ class Route
 
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
+    validate!
     register_instance
+  end
+
+  def valid?
+    validate!
+  rescue
+    false
   end
 
   def add_station(station)
@@ -20,5 +27,13 @@ class Route
 
   def list_stations
     @stations.each { |station| puts station.name}
+  end
+
+  private
+
+  def validate!
+    raise "Start and end stations cannot be the same" if stations.first == stations.last
+    raise "Start station cannot be nil" if stations.first.nil?
+    raise "End station cannot be nil" if stations.last.nil?
   end
 end
