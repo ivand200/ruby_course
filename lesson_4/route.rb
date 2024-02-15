@@ -1,7 +1,9 @@
 require_relative 'instance_counter'
+require_relative 'validate'
 
 class Route
   include InstanceCounter
+  include Validate
 
   attr_reader :stations
 
@@ -9,12 +11,6 @@ class Route
     @stations = [start_station, end_station]
     validate!
     register_instance
-  end
-
-  def valid?
-    validate!
-  rescue
-    false
   end
 
   def add_station(station)

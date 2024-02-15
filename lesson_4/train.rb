@@ -1,9 +1,11 @@
 require_relative 'instance_counter'
 require_relative 'manufacturer'
+require_relative 'validate'
 
 class Train
   include Manufacturer
   include InstanceCounter
+  include Validate
 
   attr_reader :number, :type, :carriages, :speed
 
@@ -18,13 +20,6 @@ class Train
     validate!
     @@trains[number] = self
     register_instance
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
 
   def speed_up(amount)
@@ -71,6 +66,10 @@ class Train
 
   def self.find(number)
     @@trains[number]
+  end
+
+  def each_carriage
+    carriages.each { |carriage| yield(carriage) }
   end
 
   protected

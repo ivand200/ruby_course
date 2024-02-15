@@ -25,7 +25,9 @@ class MainInterface
       puts '6: Remove carriage from a train'
       puts '7: Move train along the route'
       puts '8: List stations and trains at the station'
-      puts '9: Exit'
+      puts '9: List carriages on a train'
+      puts '10: Occupy space or volume in a carriage'
+      puts '9: 11'
       print '> '
       choice = gets.chomp.to_i
       case choice
@@ -37,7 +39,9 @@ class MainInterface
       when 6 then remove_carriage
       when 7 then move_train
       when 8 then list_stations_and_trains
-      when 9 then break
+      when 9 then list_carriages
+      when 10 then occupy_space_or_volume
+      when 11 then break
       else
         puts 'Invalid option. Please enter a number from 1 to 9.'
       end
@@ -151,10 +155,14 @@ class MainInterface
     return if train.nil?
 
     begin
+      print "Enter the number of seats (for passenger trains) or total volume (for cargo trains): "
+      quantity = gets.chomp.to_i
       if train.type == :passenger
-        carriage = PassengerCarriage.new
+        carriage = PassengerCarriage.new(quantity)
+        puts "Passenger carriage with #{quantity} seats added."
       elsif train.type == :cargo
-        carriage = CargoCarriage.new
+        carriage = CargoCarriage.new(quantity)
+        puts "Cargo carriage with #{quantity} volume added."
       else
         raise "Invalid train type."
       end
@@ -232,7 +240,43 @@ class MainInterface
     index = gets.chomp.to_i - 1
     @trains[index]
   end
+
+  def list_carriages
+    train = select_train
+    return if train.nil?
+
+    puts "Listing carriages for train #{train.number}:"
+    train.each_carriage.with_index(1) do |carriage, index|
+      if carriage.type == :passenger
+        puts "#{index}: Passenger Carriage, Seats: #{carriage.total_seats}, Occupied: #{carriage.occupied_seats}"
+      elsif carriage.type == :cargo
+        puts "#{index}: Cargo Carriage, Volume: #{carriage.total_volume}, Occupied: #{carriage.occupied_volume}"
+      end
+    end
+  end
+
+  def occupy_space_or_volume
+    train = select_train
+    return if train.nil?
+
+    puts "Select a carriage by number:"
+    train.each_carriage.with_index(1) { |carriage, index| puts "#{index}. Carriage"}
+    index = gets.chomp.to_i - 1
+    carriage = train.carriages[index]
+
+    if carriage.type == :passenger
+      carriage.occupy_seat
+      puts "One seat has been occupied in the selected passenger carriage."
+    elsif carriage.type == :cargo
+      print "Enter the volume to occupy: "
+      volume = gets.chomp.to_i
+      carriage.occupy_volume(volume)
+      puts "#{volume} volume has been occupied in the selected cargo carriage."
+    end
+  end
 end
 
 interface = MainInterface.new
 interface.run
+
+

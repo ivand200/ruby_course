@@ -1,4 +1,5 @@
 require_relative 'instance_counter'
+require_relative 'validate'
 class Station
   include InstanceCounter
 
@@ -11,13 +12,6 @@ class Station
     validate!
     @@stations << self
     register_instance
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
 
   def self.all
@@ -34,6 +28,10 @@ class Station
 
   def trains_by_type(type)
     @trains.count { |train| train.type == type }
+  end
+
+  def each_train
+    trains.each { |train| yield(train)}
   end
 
   private
