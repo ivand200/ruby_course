@@ -1,19 +1,14 @@
 require_relative 'carriage'
 
 class CargoCarriage < Carriage
-  attr_reader :total_volume, :occupied_volume
-  def initialize(total_volume)
+  attr_reader :total_place, :used_place
+  def initialize(total_place)
     @type = :cargo
-    @total_volume = total_volume
-    @occupied_volume = 0
+    super
   end
 
   def occupy_volume(volume)
-    raise "Not enough available volume" if volume > available_volume
-    @occupied_volume += volume
-  end
-
-  def available_volume
-    total_volume - occupied_volume
+    raise "Not enough available volume" if volume > free_space
+    @used_place += volume
   end
 end

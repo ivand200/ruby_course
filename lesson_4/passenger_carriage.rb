@@ -1,20 +1,15 @@
 require_relative 'carriage'
 
 class PassengerCarriage < Carriage
-  attr_reader :total_seats, :occupied_seats
+  attr_reader :total_place, :used_place
 
-  def initialize(total_seats)
+  def initialize(total_place)
     @type = :passenger
-    @total_seats = total_seats
-    @occupied_seats = 0
+    super
   end
 
   def occupy_seat
-    raise "All seats are occupied" if occupied_seats >= total_seats
-    @occupied_seats += 1
-  end
-
-  def available_seats
-    total_seats - occupied_seats
+    raise "All seats are occupied" if used_place >= total_place
+    @used_place += 1
   end
 end

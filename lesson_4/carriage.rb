@@ -5,11 +5,16 @@ class Carriage
   include Manufacturer
   include Validate
 
-  attr_reader :type
+  attr_reader :type, :total_place, :used_place
 
-  def initialize(type)
-    @type = type
+  def initialize(total_place)
+    @total_place = total_place
+    @used_place = 0
     validate!
+  end
+
+  def free_space
+    total_place - used_place
   end
 
   protected
