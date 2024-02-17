@@ -1,7 +1,6 @@
 require_relative 'carriage'
 
 class PassengerCarriage < Carriage
-  attr_reader :total_place, :used_place
 
   def initialize(total_place)
     @type = :passenger

@@ -1,7 +1,7 @@
 require_relative 'carriage'
 
 class CargoCarriage < Carriage
-  attr_reader :total_place, :used_place
+
   def initialize(total_place)
     @type = :cargo
     super
@@ -12,3 +12,4 @@ class CargoCarriage < Carriage
     @used_place += volume
   end
 end
+
