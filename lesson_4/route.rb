@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'instance_counter'
 require_relative 'validate'
 
@@ -22,14 +24,14 @@ class Route
   end
 
   def list_stations
-    @stations.each { |station| puts station.name}
+    @stations.each { |station| puts station.name }
   end
 
   private
 
   def validate!
-    raise "Start and end stations cannot be the same" if stations.first == stations.last
-    raise "Start station cannot be nil" if stations.first.nil?
-    raise "End station cannot be nil" if stations.last.nil?
+    raise 'Start and end stations cannot be the same' if stations.first == stations.last
+    raise 'Start station cannot be nil' if stations.first.nil?
+    raise 'End station cannot be nil' if stations.last.nil?
   end
 end

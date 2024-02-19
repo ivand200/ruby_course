@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'instance_counter'
 require_relative 'validate'
 class Station
@@ -30,13 +32,13 @@ class Station
     @trains.count { |train| train.type == type }
   end
 
-  def each_train
-    trains.each { |train| yield(train)}
+  def each_train(&block)
+    trains.each(&block)
   end
 
   private
 
   def validate!
-    raise "Station name cannot be empty!" if name.nil? ||name.strip.empty?
+    raise 'Station name cannot be empty!' if name.nil? || name.strip.empty?
   end
 end

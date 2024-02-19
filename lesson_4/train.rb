@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'instance_counter'
 require_relative 'manufacturer'
 require_relative 'validate'
@@ -9,13 +11,12 @@ class Train
 
   attr_reader :number, :type, :carriages, :speed
 
-  VALID_NUMBER_FORMAT = /^[a-z\d]{3}-?[a-z\d]{2}$/i
+  VALID_NUMBER_FORMAT = /^[a-z\d]{3}-?[a-z\d]{2}$/i.freeze
 
   @@trains = {}
   def initialize(number, type)
     @number = number
     @type = type
-    @carriages = []
     @speed = 0
     validate!
     @@trains[number] = self
@@ -31,11 +32,11 @@ class Train
   end
 
   def add_carriage(carriage)
-    @carriages << carriage if speed == 0 && carriage_compatible?(carriage)
+    @carriages << carriage if speed.zero? && carriage_compatible?(carriage)
   end
 
   def remove_carriage(carriage)
-    @carriages.delete(carriage) if speed == 0
+    @carriages.delete(carriage) if speed.zero?
   end
 
   def assign_route(route)
@@ -45,19 +46,19 @@ class Train
   end
 
   def move_forward
-    if next_station
-      current_station.send_train(self)
-      @current_station_index += 1
-      current_station.accept_train(self)
-    end
+    return unless next_station
+
+    current_station.send_train(self)
+    @current_station_index += 1
+    current_station.accept_train(self)
   end
 
   def move_backward
-    if previous_station
-      current_station.send_train(self)
-      @current_station_index -= 1
-      current_station.accept_train(self)
-    end
+    return unless previous_station
+
+    current_station.send_train(self)
+    @current_station_index -= 1
+    current_station.accept_train(self)
   end
 
   def current_station
@@ -68,8 +69,12 @@ class Train
     @@trains[number]
   end
 
-  def each_carriage
-    carriages.each { |carriage| yield(carriage) }
+  def each_carriage(&block)
+    carriages.each(&block)
+  end
+
+  def carriages
+    @carriages ||= []
   end
 
   protected
@@ -82,12 +87,12 @@ class Train
   end
 
   def previous_station
-    @route.stations[@current_station_index - 1] if @current_station_index > 0
+    @route.stations[@current_station_index - 1] if @current_station_index.positive?
   end
 
   def validate!
     raise "Number can't be nil" if number.nil?
-    raise "Number has invalid format" if number !~ VALID_NUMBER_FORMAT
+    raise 'Number has invalid format' if number !~ VALID_NUMBER_FORMAT
   end
 
   private
@@ -99,7 +104,3 @@ class Train
     carriage.type == @type
   end
 end
-
-
-
-

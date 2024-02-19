@@ -6,12 +6,14 @@ require_relative 'train'
 require_relative 'passenger_carriage'
 require_relative 'passenger_train'
 require_relative 'cargo_train'
+require_relative 'route_manager'
 
 class MainInterface
   def initialize
     @stations = []
     @trains = []
     @routes = []
+    @route_manager = RouteManager.new(@routes, @stations)
   end
 
   def run
@@ -93,35 +95,21 @@ class MainInterface
   end
 
   def create_route
-    begin
-      puts 'Enter the start station name:'
-      start_station = select_station
-      puts 'Enter the end station name:'
-      end_station = select_station
-      raise "Start and end station must be different" if start_station == end_station
+    puts 'Enter the start station name:'
+    start_station_name = gets.chomp
+    puts 'Enter the end station name:'
+    end_station_name = gets.chomp
 
-      route = Route.new(start_station, end_station)
-      @routes << route
-      puts "Route from #{start_station.name} to #{end_station.name} created."
-    rescue RuntimeError => e
-      puts "Error creating route: #{e.message}"
-      retry
-    end
+    @route_manager.create_route(start_station_name, end_station_name)
   end
 
   def add_station_to_route
-    route = select_route
-    return if route.nil?
+    selected_route = select_route
+    return if selected_route.nil?
 
-    station = select_station
-    return if station.nil?
-
-    if route.stations.include?(station)
-      puts 'Station already in the route.'
-    else
-      route.add_station(station)
-      puts "Station #{station.name} added to the route."
-    end
+    puts 'Enter station name to add to the route:'
+    station_name = gets.chomp
+    @route_manager.add_station_to_route(selected_route, station_name)
   end
 
   def remove_station_from_route
@@ -155,7 +143,7 @@ class MainInterface
     return if train.nil?
 
     begin
-      print "Enter the number of seats (for passenger trains) or total volume (for cargo trains): "
+      print 'Enter the number of seats (for passenger trains) or total volume (for cargo trains): '
       quantity = gets.chomp.to_i
       if train.type == :passenger
         carriage = PassengerCarriage.new(quantity)
@@ -164,7 +152,7 @@ class MainInterface
         carriage = CargoCarriage.new(quantity)
         puts "Cargo carriage with #{quantity} volume added."
       else
-        raise "Invalid train type."
+        raise 'Invalid train type.'
       end
 
       train.add_carriage(carriage)
@@ -172,10 +160,10 @@ class MainInterface
     rescue RuntimeError => e
       puts "Error adding carriage: #{e.message}"
       retry
-      end
     end
+  end
 
-    def remove_carriage
+  def remove_carriage
     train = select_train
     return if train.nil? || train.carriages.empty?
 
@@ -222,7 +210,6 @@ class MainInterface
 
   def select_route
     puts 'Available routes:'
-    # @routes.each_with_index { |route, index| puts "#{index + 1}: Route ##{route.stations}" }
     @routes.each_with_index do |route, index|
       start_station_name = route.stations.first.name
       end_station_name = route.stations.last.name
@@ -248,9 +235,9 @@ class MainInterface
     puts "Listing carriages for train #{train.number}:"
     train.each_carriage.with_index(1) do |carriage, index|
       if carriage.type == :passenger
-        puts "#{index}: Passenger Carriage, Seats: #{carriage.total_seats}, Occupied: #{carriage.occupied_seats}"
+        puts "#{index}: Passenger Carriage, Seats: #{carriage.total_place}, Occupied: #{carriage.used_place}"
       elsif carriage.type == :cargo
-        puts "#{index}: Cargo Carriage, Volume: #{carriage.total_volume}, Occupied: #{carriage.occupied_volume}"
+        puts "#{index}: Cargo Carriage, Volume: #{carriage.total_place}, Occupied: #{carriage.used_place}"
       end
     end
   end
@@ -259,16 +246,16 @@ class MainInterface
     train = select_train
     return if train.nil?
 
-    puts "Select a carriage by number:"
-    train.each_carriage.with_index(1) { |carriage, index| puts "#{index}. Carriage"}
+    puts 'Select a carriage by number:'
+    train.each_carriage.with_index(1) { |_carriage, index| puts "#{index}. Carriage" }
     index = gets.chomp.to_i - 1
     carriage = train.carriages[index]
 
     if carriage.type == :passenger
       carriage.occupy_seat
-      puts "One seat has been occupied in the selected passenger carriage."
+      puts 'One seat has been occupied in the selected passenger carriage.'
     elsif carriage.type == :cargo
-      print "Enter the volume to occupy: "
+      print 'Enter the volume to occupy: '
       volume = gets.chomp.to_i
       carriage.occupy_volume(volume)
       puts "#{volume} volume has been occupied in the selected cargo carriage."
@@ -278,5 +265,3 @@ end
 
 interface = MainInterface.new
 interface.run
-
-

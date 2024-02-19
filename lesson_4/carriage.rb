@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'validate'
 require_relative 'manufacturer'
 
@@ -20,6 +22,6 @@ class Carriage
   protected
 
   def validate!
-    raise "Carriage type cannot be nil" if type.nil?
+    raise 'Carriage type cannot be nil' if type.nil?
   end
 end
