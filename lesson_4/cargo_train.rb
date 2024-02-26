@@ -7,3 +7,4 @@ class CargoTrain < Train
     super(number, :cargo)
   end
 end
+

@@ -2,12 +2,18 @@
 
 require_relative 'instance_counter'
 require_relative 'validate'
+require_relative 'accessor'
+require_relative 'validation'
 
 class Route
   include InstanceCounter
   include Validate
+  include Validation
+  include Accessors
 
-  attr_reader :stations
+  attr_accessor_with_history :stations
+
+  validate :stations, :type, Array
 
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
@@ -25,13 +31,5 @@ class Route
 
   def list_stations
     @stations.each { |station| puts station.name }
-  end
-
-  private
-
-  def validate!
-    raise 'Start and end stations cannot be the same' if stations.first == stations.last
-    raise 'Start station cannot be nil' if stations.first.nil?
-    raise 'End station cannot be nil' if stations.last.nil?
   end
 end

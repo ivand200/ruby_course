@@ -3,9 +3,11 @@
 require_relative 'carriage'
 
 class PassengerCarriage < Carriage
+  validate :type, :presence
+  validate :type, :type, Symbol
   def initialize(total_place)
     @type = :passenger
-    super
+    super(total_place)
   end
 
   def occupy_seat

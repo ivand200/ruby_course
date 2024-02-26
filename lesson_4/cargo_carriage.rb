@@ -3,9 +3,11 @@
 require_relative 'carriage'
 
 class CargoCarriage < Carriage
+  validate :type, :presence
+  validate :type, :type, Symbol
   def initialize(total_place)
     @type = :cargo
-    super
+    super(total_place)
   end
 
   def occupy_volume(volume)
@@ -14,3 +16,4 @@ class CargoCarriage < Carriage
     @used_place += volume
   end
 end
+

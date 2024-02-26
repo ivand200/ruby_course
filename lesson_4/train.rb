@@ -2,22 +2,30 @@
 
 require_relative 'instance_counter'
 require_relative 'manufacturer'
-require_relative 'validate'
+require_relative 'validation'
+require_relative 'accessor'
 
 class Train
   include Manufacturer
   include InstanceCounter
-  include Validate
+  include Validation
+  include Accessors
 
-  attr_reader :number, :type, :carriages, :speed
+  attr_accessor_with_history :speed
 
-  VALID_NUMBER_FORMAT = /^[a-z\d]{3}-?[a-z\d]{2}$/i.freeze
+  attr_reader :number, :type, :carriages
+
+  strong_attr_accessor :type, Symbol
+
+  validate :number, :presence
+  validate :number, :format, /^[a-z\d]{3}-?[a-z\d]{2}$/i
 
   @@trains = {}
   def initialize(number, type)
+
     @number = number
-    @type = type
-    @speed = 0
+    self.type = type
+    self.speed = 0
     validate!
     @@trains[number] = self
     register_instance
@@ -88,11 +96,6 @@ class Train
 
   def previous_station
     @route.stations[@current_station_index - 1] if @current_station_index.positive?
-  end
-
-  def validate!
-    raise "Number can't be nil" if number.nil?
-    raise 'Number has invalid format' if number !~ VALID_NUMBER_FORMAT
   end
 
   private

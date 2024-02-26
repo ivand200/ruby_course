@@ -2,11 +2,18 @@
 
 require_relative 'instance_counter'
 require_relative 'validate'
+require_relative 'validation'
+require_relative 'accessor'
 class Station
   include InstanceCounter
+  include Validation
+  include Accessors
 
   @@stations = []
-  attr_reader :name, :trains
+  attr_accessor_with_history :name
+  attr_reader :trains
+
+  validate :name, :presence
 
   def initialize(name)
     @name = name
@@ -34,11 +41,5 @@ class Station
 
   def each_train(&block)
     trains.each(&block)
-  end
-
-  private
-
-  def validate!
-    raise 'Station name cannot be empty!' if name.nil? || name.strip.empty?
   end
 end

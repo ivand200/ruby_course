@@ -7,3 +7,9 @@ class PassengerTrain < Train
     super(number, :passenger)
   end
 end
+
+begin
+  invalid_train = PassengerTrain.new('abc-66')
+rescue StandardError => e
+  puts "Validation Error: #{e.message}"
+end

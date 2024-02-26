@@ -1,27 +1,29 @@
 # frozen_string_literal: true
 
-require_relative 'validate'
 require_relative 'manufacturer'
+require_relative 'validation'
+require_relative 'accessor'
 
 class Carriage
   include Manufacturer
-  include Validate
+  include Validation
+  include Accessors
 
-  attr_reader :type, :total_place, :used_place
+  validate :total_place, :presence
+  validate :total_place, :type, Integer
+
+  attr_accessor_with_history :total_place, :used_place
+  attr_accessor :type
+
 
   def initialize(total_place)
     @total_place = total_place
     @used_place = 0
+    @type = type
     validate!
   end
 
   def free_space
     total_place - used_place
-  end
-
-  protected
-
-  def validate!
-    raise 'Carriage type cannot be nil' if type.nil?
   end
 end
